@@ -13,10 +13,15 @@ done
 
 TOKEN=$(cat /vagrant/node-token)
 
+# wait until K3s server is ready
+until curl -k https://192.168.56.110:6443 >/dev/null 2>&1; do
+  echo "Waiting for K3s server..."
+  sleep 2
+done
+
 # install k3s agent
 curl -sfL https://get.k3s.io | K3S_URL="https://192.168.56.110:6443" \
   K3S_TOKEN="$TOKEN" \
-  sh -s - agent \
-  --node-ip 192.168.56.111
+  sh -s - agent --node-ip 192.168.56.111
 
 echo "K3s agent installed"
